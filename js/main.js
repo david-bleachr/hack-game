@@ -345,7 +345,6 @@ function createPowerUps() {
   fireballs.physicsBodyType = Phaser.Physics.ARCADE;
 }
 
-
 function generatePowerUps() {
   const powerUpSelection = getRandomInt(0, 10);
 
