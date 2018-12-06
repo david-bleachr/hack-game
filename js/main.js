@@ -81,7 +81,7 @@ var mainState = {
     game.physics.arcade.overlap(robots, player, reducePlayerHealth, null, this);
     game.physics.arcade.overlap(playerProjectiles, boss, reduceBossHealth, null, this);
     // game.physics.arcade.overlap(bossProjectiles, player, reducePlayerHealth, null, this);
-    // game.physics.arcade.overlap(fireballs, player, reducePlayerHealth, null, this);
+    game.physics.arcade.overlap(fireballs, player, reducePlayerHealth, null, this);
   }
 };
 
@@ -283,7 +283,7 @@ function createRobots() {
   robots.setAll('outOfBoundsKill', true);
   robots.setAll('checkWorldBounds', true);
 
-  var tween = game.add.tween(robots).to( { x: gameX + 100 }, 2000, Phaser.Easing.Linear.None, true, 0, 10, true);
+  var tween = game.add.tween(robots).to( { x: gameX  }, 2000, Phaser.Easing.Linear.None, true, 0, 10, true);
   stageInitated = true
 }
 
