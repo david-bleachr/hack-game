@@ -11,6 +11,7 @@ var mainState = {
     createPlayer();
     createRobots();
     createFireballs();
+    initateFireballs(5);
   },
 
   update: function() {
@@ -29,7 +30,8 @@ var mainState = {
     }
 
     // Level Stages
-    if (!stages.robotsStart.ended && (robots.countLiving() / robots.children.length) === .5) {
+    var robotsLiving = robots.countLiving()
+    if (!stages.robotsStart.ended && (robotsLiving / robots.children.length) === .5) {
     console.log("FIRST ENDED");
       stages.robotsStart.ended = true;
       initateFireballs(5);
@@ -38,13 +40,12 @@ var mainState = {
 
     if (stages.robotsStart.ended && !stages.robotsHalf.started) {
     console.log("HALF STARTED");
-
       stages.robotsHalf.started = true;
       initateFireballs(1);
       initatePowerUps(3);
     }
 
-    if (!stages.robotsHalf.ended && robots.countLiving() === 0) {
+    if (!stages.robotsHalf.ended && robotsLiving === 0) {
     console.log("HALF ENDED");
       stages.robotsHalf.ended = true;
     }
@@ -62,16 +63,12 @@ var mainState = {
         !stages.increaseFireballs.ended
           &&
         stages.increaseFireballs.endTime < game.time.time) {
-
-
     console.log("FIRE OVER", projectileFireballCreator);
-
       stages.increaseFireballs.ended = true;
     }
 
     if (stages.increaseFireballs.ended && !stages.boss.started) {
     console.log("boss STARTED");
-
       createBoss();
       projectileFireballCreator.delay = 1000;
 
@@ -82,15 +79,14 @@ var mainState = {
     game.physics.arcade.overlap(powerUps, player, collectPowerUp, null, this);
     game.physics.arcade.overlap(playerProjectiles, robots, destroyRobotHandler, null, this);
     game.physics.arcade.overlap(robots, player, reducePlayerHealth, null, this);
-    // game.physics.arcade.overlap(playerProjectiles, boss, reduceBossHealth, null, this);
+    game.physics.arcade.overlap(playerProjectiles, boss, reduceBossHealth, null, this);
     // game.physics.arcade.overlap(bossProjectiles, player, reducePlayerHealth, null, this);
-    game.physics.arcade.overlap(fireballs, player, reducePlayerHealth, null, this);
+    // game.physics.arcade.overlap(fireballs, player, reducePlayerHealth, null, this);
   }
 };
 
 
 var powerUps;
-
 var projectileFireballCreator;
 
 var stages = {
