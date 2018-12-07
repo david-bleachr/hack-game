@@ -58,7 +58,7 @@ var mainState = {
       stages.increaseFireballs.started = true;
 
       projectileFireballCreator.delay = 750;
-      projectilePowerUpCreator.delay = 750;
+      projectilePowerUpCreator.delay = 2000;
     }
 
     if (stages.increaseFireballs.started
@@ -91,7 +91,7 @@ var mainState = {
     game.physics.arcade.overlap(playerProjectiles, robots, destroyRobotHandler, null, this);
     game.physics.arcade.overlap(robots, player, reducePlayerHealth, null, this);
     game.physics.arcade.overlap(bossProjectiles, player, reducePlayerHealth, null, this);
-    // game.physics.arcade.overlap(fireballs, player, reducePlayerHealth, null, this);
+    game.physics.arcade.overlap(fireballs, player, reducePlayerHealth, null, this);
   }
 };
 
@@ -254,7 +254,7 @@ function reducePlayerHealth(player, fireball) {
     healthBar.alpha -= (healthBar.alpha * .1);
 
     var explosion = explosions.getFirstExists(false);
-    explosion.scale.setTo(0.15, 0.15)
+    explosion.scale.setTo(0.25, 0.25)
     explosion.reset(player.x, player.y);
     explosion.play('explosion', 60, false, true);
 
@@ -447,14 +447,20 @@ function reduceBossHealth(boss, playerProjectile) {
   if (bossLife > 0) {
     bossLife -= 1;
     var explosion = explosions.getFirstExists(false);
-    explosion.scale.setTo(0.15, 0.15)
+    explosion.scale.setTo(.5, .5)
     explosion.reset(boss.x, boss.y);
-    explosion.play('kaboom', 60, false, true);
+    explosion.play('explosion', 60, false, true);
   } else {
-    var explosion = explosions.getFirstExists(false);
-    explosion.scale.setTo(1, 1)
-    explosion.reset(boss.x, boss.y);
-    explosion.play('kaboom', 10, false, true);
+    for (var i = 0; i < 5; i++) {
+      var explosion = explosions.getFirstExists(false);
+
+      if (explosion) {
+        explosion.scale.setTo(2.5, 2.5)
+        explosion.reset((boss.x + 50*y), (boss.y + 50*y));
+        explosion.play('explosion', 10, false, true);
+      }
+    }
+
     boss.kill();
   }
 }
