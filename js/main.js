@@ -11,8 +11,10 @@ var mainState = {
     createPlayer();
     createRobots();
     createFireballs();
-    initateFireballs(4);
     createBossProjectiles();
+
+    initateFireballs(4);
+    initatePowerUps(10);
   },
 
   update: function() {
@@ -32,18 +34,17 @@ var mainState = {
 
     // Level Stages
     var robotsLiving = robots.countLiving()
-    if (!stages.robotsStart.ended && (robotsLiving / robots.children.length) === .5) {
+    if (!stages.robotsStart.ended && (robotsLiving / robots.children.length) < .5) {
     console.log("FIRST ENDED");
       stages.robotsStart.ended = true;
-      initateFireballs(5);
-      initatePowerUps(5);
+      projectileFireballCreator.delay = 1000;
     }
 
     if (stages.robotsStart.ended && !stages.robotsHalf.started) {
     console.log("HALF STARTED");
       stages.robotsHalf.started = true;
-      initateFireballs(1);
-      initatePowerUps(3);
+      projectileFireballCreator.delay = 1000;
+      projectilePowerUpCreator.delay = 5000;
     }
 
     if (!stages.robotsHalf.ended && robotsLiving === 0) {
@@ -56,7 +57,8 @@ var mainState = {
       stages.increaseFireballs.endTime = game.time.time + (10 * 1000);
       stages.increaseFireballs.started = true;
 
-      projectileFireballCreator.delay = 500;
+      projectileFireballCreator.delay = 750;
+      projectilePowerUpCreator.delay = 750;
     }
 
     if (stages.increaseFireballs.started
@@ -71,7 +73,7 @@ var mainState = {
     if (stages.increaseFireballs.ended && !stages.boss.started) {
     console.log("boss STARTED");
       createBoss();
-      projectileFireballCreator.delay = 1000;
+      projectileFireballCreator.delay = 1500;
 
        stages.boss.started = true;
     }
@@ -80,11 +82,14 @@ var mainState = {
       fireBossProjectile();
     }
 
+    if (stages.boss.started) {
+      game.physics.arcade.overlap(playerProjectiles, boss, reduceBossHealth, null, this);
+    }
+
     // Collisons
     game.physics.arcade.overlap(powerUps, player, collectPowerUp, null, this);
     game.physics.arcade.overlap(playerProjectiles, robots, destroyRobotHandler, null, this);
     game.physics.arcade.overlap(robots, player, reducePlayerHealth, null, this);
-    game.physics.arcade.overlap(playerProjectiles, boss, reduceBossHealth, null, this);
     game.physics.arcade.overlap(bossProjectiles, player, reducePlayerHealth, null, this);
     // game.physics.arcade.overlap(fireballs, player, reducePlayerHealth, null, this);
   }
