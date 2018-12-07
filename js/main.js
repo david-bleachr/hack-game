@@ -11,14 +11,15 @@ var mainState = {
     createPlayer();
     createRobots();
     createFireballs();
-    initateFireballs(5);
+    initateFireballs(4);
+    createBossProjectiles();
   },
 
   update: function() {
     starfield.tilePosition.y += 5;
 
     // Controller Input
-    var maxSpeed = 550;
+    var maxSpeed = 650;
     if (stick.isDown) {
       game.physics.arcade.velocityFromRotation(stick.rotation, stick.force * maxSpeed, player.body.velocity);
     } else {
@@ -75,13 +76,17 @@ var mainState = {
        stages.boss.started = true;
     }
 
+    if (game.time.now > bossProjectileTime && stages.boss.started) {
+      fireBossProjectile();
+    }
+
     // Collisons
     game.physics.arcade.overlap(powerUps, player, collectPowerUp, null, this);
     game.physics.arcade.overlap(playerProjectiles, robots, destroyRobotHandler, null, this);
     game.physics.arcade.overlap(robots, player, reducePlayerHealth, null, this);
     game.physics.arcade.overlap(playerProjectiles, boss, reduceBossHealth, null, this);
-    // game.physics.arcade.overlap(bossProjectiles, player, reducePlayerHealth, null, this);
-    game.physics.arcade.overlap(fireballs, player, reducePlayerHealth, null, this);
+    game.physics.arcade.overlap(bossProjectiles, player, reducePlayerHealth, null, this);
+    // game.physics.arcade.overlap(fireballs, player, reducePlayerHealth, null, this);
   }
 };
 
@@ -394,7 +399,7 @@ function createBoss() {
   bossGroup.physicsBodyType = Phaser.Physics.ARCADE;
 
   boss = bossGroup.create(66, 50, 'boss');
-boss.scale.setTo(1.75, 1.75);
+  boss.scale.setTo(3.75, 3.75);
   boss.anchor.setTo(0.5, 0.5);
   boss.animations.add('fly', [ 0, 1, 2, 3 ], 5, true);
   boss.play('fly');
@@ -404,6 +409,31 @@ boss.scale.setTo(1.75, 1.75);
 
   // moving boss around
   var tween = game.add.tween(boss).to( { x: (game.world.width - 200) }, 2000,  Phaser.Easing.Back.InOut, true, 0, 1000, true);
+}
+
+function createBossProjectiles() {
+  bossProjectiles = game.add.group();
+  bossProjectiles.enableBody = true;
+  bossProjectiles.physicsBodyType = Phaser.Physics.ARCADE;
+  bossProjectiles.createMultiple(100, 'bossProjectile');
+  bossProjectiles.setAll('anchor.x', 0.5);
+  bossProjectiles.setAll('anchor.y', 1);
+  bossProjectiles.setAll('outOfBoundsKill', true);
+  bossProjectiles.setAll('checkWorldBounds', true);
+}
+
+function fireBossProjectile() {
+  bossProjectile = bossProjectiles.getFirstExists(false);
+  boss.anchor.setTo(0.5, 0.5);
+  bossProjectile.animations.add('fly', [ 0, 1, 2, 3 ], 25, true);
+  bossProjectile.play('fly');
+
+  if (bossProjectile && bossLife != 0) {
+    bossProjectile.reset(boss.x + 50, boss.y + 10);
+
+    game.physics.arcade.moveToObject(bossProjectile, player, 200);
+    bossProjectileTime = game.time.now + 4000;
+  }
 }
 
 function reduceBossHealth(boss, playerProjectile) {

@@ -13,7 +13,7 @@ var loadState = {
     game.load.spritesheet('robot', 'assets/robot.png', 77.5, 63);
     game.load.spritesheet('explosion', 'assets/explode.png', 128, 128);
     game.load.spritesheet('fireball', 'assets/fireball.png', 265, 265, 10);
-    game.load.spritesheet('bossProjectile', 'assets/blue-flame.png', 32, 32);
+    game.load.spritesheet('bossProjectile', 'assets/blue-flame.png', 96, 96);
     game.load.spritesheet('playerProjectile', 'assets/tennis-ball.png', 19.75, 19.75);
 
     this.load.atlas('arcade', 'assets/virtualjoystick/arcade-joystick.png', 'assets/virtualjoystick/arcade-joystick.json');
